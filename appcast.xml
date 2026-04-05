@@ -1,0 +1,18 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Kehai Changelog</title>
+        <item>
+            <title>Version 1.1</title>
+            <sparkle:releaseNotesLink>
+                https://raw.githubusercontent.com/yamada8282/kehai/main/releasenotes.html
+            </sparkle:releaseNotesLink>
+            <pubDate>Mon, 06 Apr 2026 03:35:49 +0900</pubDate>
+            <enclosure url="https://github.com/yamada8282/kehai/releases/download/v1.1/Kehai-1.1.zip"
+                       length="2297621"
+                       type="application/octet-stream"
+                       sparkle:edSignature="sparkle:edSignature="nT4RWjuyL0lEqFLxwKmg9Bj29e39K/yX+auu1t5dPAnx9xOulVqivhRte41HxdeMC1froEyuXkArEkcqMnv8DQ==" length="2297621""
+                       sparkle:version="1.1" />
+        </item>
+    </channel>
+</rss>
