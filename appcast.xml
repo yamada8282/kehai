@@ -3,16 +3,16 @@
     <channel>
         <title>Kehai Changelog</title>
         <item>
-            <title>Version 1.1</title>
+            <title>Version 1.2</title>
             <sparkle:releaseNotesLink>
                 https://raw.githubusercontent.com/yamada8282/kehai/main/releasenotes.html
             </sparkle:releaseNotesLink>
-            <pubDate>Mon, 06 Apr 2026 03:35:49 +0900</pubDate>
-            <enclosure url="https://github.com/yamada8282/kehai/releases/download/v1.1/Kehai-1.1.zip"
-                       length="2297621"
+            <pubDate>Mon, 06 Apr 2026 03:43:30 +0900</pubDate>
+            <enclosure url="https://github.com/yamada8282/kehai/releases/download/v1.2/Kehai-1.2.zip"
+                       length="2298348"
                        type="application/octet-stream"
-                       sparkle:edSignature="sparkle:edSignature="nT4RWjuyL0lEqFLxwKmg9Bj29e39K/yX+auu1t5dPAnx9xOulVqivhRte41HxdeMC1froEyuXkArEkcqMnv8DQ==" length="2297621""
-                       sparkle:version="1.1" />
+                       sparkle:edSignature="sparkle:edSignature="TKNErGs3jcJELeVEX5T1BS8UfmH7a0viSMHsspPdI1ySY6oWsdLX6jTRWJjjVGnpGU5wQJm2s/Kc1Z3KB/XRDQ==" length="2298348""
+                       sparkle:version="1.2" />
         </item>
     </channel>
 </rss>
