@@ -1,0 +1,21 @@
+# Swift build artifacts
+.build/
+*.o
+*.d
+
+# Xcode
+.swiftpm/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+
+# Generated
+*.zip
+Kehai.app/
+
+# Secrets
+GoogleService-Info.plist
+.github_user
+
+# macOS
+.DS_Store
