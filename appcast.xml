@@ -7,11 +7,11 @@
             <sparkle:releaseNotesLink>
                 https://raw.githubusercontent.com/yamada8282/kehai/main/releasenotes.html
             </sparkle:releaseNotesLink>
-            <pubDate>Sun, 12 Apr 2026 15:26:30 +0900</pubDate>
+            <pubDate>Sun, 12 Apr 2026 15:29:56 +0900</pubDate>
             <enclosure url="https://github.com/yamada8282/kehai/releases/download/v1.8.2/Kehai-1.8.2.zip"
                        length="2435795"
                        type="application/octet-stream"
-                       sparkle:edSignature="8DiL4f8Bg79jvhJSJR0JNOkjMuTZJpV3HZP8PIabna7glA+bsEvNszt9DqTQyb5WDQwo5y5foFhLa8BFY3f3AQ=="
+                       sparkle:edSignature="2mded+yg5fsJQDTPqMOUIbtO4xOQOgMr9z2JqGqsuzwUmytFAHGUNRvCzcSHRguuG3R4K/g2Eej6wfhb3V+rCQ=="
                        sparkle:version="1.8.2" />
         </item>
     </channel>
