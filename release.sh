@@ -17,8 +17,15 @@ else
 fi
 
 # 2. バージョンの入力
-read -p "新しいバージョン番号を入力してください (例: 1.1): " VERSION
-read -p "リリースノート（変更点）を入力してください: " NOTES
+VERSION="$1"
+if [ -z "$VERSION" ]; then
+    read -p "新しいバージョン番号を入力してください (例: 1.1): " VERSION
+fi
+
+NOTES="$2"
+if [ -z "$NOTES" ]; then
+    read -p "リリースノート（変更点）を入力してください: " NOTES
+fi
 
 # 3. アプリをビルド & パッケージ
 ./make_app.sh "$VERSION" "$GH_USER"
