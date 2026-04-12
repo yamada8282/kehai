@@ -10,6 +10,7 @@ struct SettingsMenuView: View {
     @State private var selectedGhost: GhostType = .standard
     @State private var selectedDisclosure: DisclosureLevel = .all
     @State private var showAddTeam: Bool = false
+    @State private var showTutorial: Bool = false
     
     init(onClose: @escaping () -> Void) {
         self.onClose = onClose
@@ -60,6 +61,11 @@ struct SettingsMenuView: View {
             AddTeamSheet { code, teamName, name, role, team, ghost in
                 store.addTeam(teamCode: code, teamName: teamName, name: name, role: role, team: team, ghostType: ghost)
             }
+        }
+        .sheet(isPresented: $showTutorial) {
+            OnboardingView(isTutorialOnly: true)
+                .environmentObject(store)
+                .environmentObject(updater)
         }
     }
     
@@ -149,6 +155,17 @@ struct SettingsMenuView: View {
             .buttonStyle(.plain)
             .disabled(!updater.canCheckForUpdates)
 
+            Button(action: { showTutorial = true }) {
+                Label("ヘルプを見る", systemImage: "questionmark.circle")
+                    .font(.system(size: 11))
+                    .foregroundColor(.white.opacity(0.8))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 6)
+                    .background(Color.purple.opacity(0.2))
+                    .cornerRadius(6)
+            }
+            .buttonStyle(.plain)
+
             Spacer()
             
             Button(action: saveProfile) {
@@ -206,7 +223,36 @@ struct AddTeamSheet: View {
                 .foregroundColor(.white)
 
             Group {
-                labeledField(label: "チームコード", placeholder: "team-abc", text: $teamCode)
+                // チームコード入力 + ランダム生成ボタン
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text("チームコード")
+                            .font(.system(size: 10)).foregroundColor(.white.opacity(0.5))
+                        Spacer()
+                        Button {
+                            let raw = UUID().uuidString.lowercased().prefix(8)
+                            teamCode = "kehai-\(raw)"
+                        } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "dice")
+                                Text("ランダム生成")
+                            }
+                            .font(.system(size: 9, weight: .medium))
+                            .foregroundColor(.purple)
+                            .padding(.horizontal, 6).padding(.vertical, 2)
+                            .background(Color.purple.opacity(0.12))
+                            .cornerRadius(4)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    TextField("team-abc または kehai-xxxxxxxx", text: $teamCode)
+                        .textFieldStyle(.plain).padding(8)
+                        .background(Color.black.opacity(0.3)).cornerRadius(6)
+                        .foregroundColor(.white)
+                        .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.white.opacity(0.1), lineWidth: 1))
+                    Text("新しくチームを作る場合は「ランダム生成」で安全なコードを作れます。")
+                        .font(.system(size: 9)).foregroundColor(.white.opacity(0.35))
+                }
                 labeledField(label: "チームの表示名", placeholder: "デザインチーム", text: $teamName)
                 labeledField(label: "このチームでの名前", placeholder: "山田 壮真", text: $displayName)
                 labeledField(label: "役割", placeholder: "サービスデザイナー", text: $role)

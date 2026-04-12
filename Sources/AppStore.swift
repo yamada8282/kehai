@@ -140,6 +140,7 @@ class AppStore: ObservableObject {
         UserDefaults.standard.set(false, forKey: "isLoggedIn")
         UserDefaults.standard.removeObject(forKey: historyKey)
         UserDefaults.standard.removeObject(forKey: joinedTeamsKey)
+        KeychainHelper.delete(key: joinedTeamsKey)
         self.isLoggedIn = false
         self.syncStarted = false
         self.myTsubuyakiHistory = []
@@ -511,37 +512,49 @@ class AppStore: ObservableObject {
 
     private func saveJoinedTeams() {
         if let encoded = try? JSONEncoder().encode(joinedTeams) {
-            UserDefaults.standard.set(encoded, forKey: joinedTeamsKey)
+            // Keychain に保存（UserDefaults より安全）
+            KeychainHelper.save(encoded, key: joinedTeamsKey)
         }
     }
 
     private func loadJoinedTeams() {
+        // まず Keychain から読む
+        if let data = KeychainHelper.load(key: joinedTeamsKey),
+           let decoded = try? JSONDecoder().decode([TeamProfile].self, from: data) {
+            self.joinedTeams = decoded
+            return
+        }
+
+        // Keychain になければ UserDefaults からマイグレーション
         if let data = UserDefaults.standard.data(forKey: joinedTeamsKey),
            let decoded = try? JSONDecoder().decode([TeamProfile].self, from: data) {
             self.joinedTeams = decoded
-        } else {
-            // 旧バージョンからの移行: teamCode が残っている場合はそれを使って TeamProfile を作成
-            let oldTeamCode = UserDefaults.standard.string(forKey: "teamCode") ?? ""
-            if !oldTeamCode.isEmpty {
-                let oldName = UserDefaults.standard.string(forKey: "myName") ?? "GUEST"
-                let oldRole = UserDefaults.standard.string(forKey: "myRole") ?? ""
-                let oldTeam = UserDefaults.standard.string(forKey: "myTeam") ?? ""
-                let oldGhost = GhostType(rawValue: UserDefaults.standard.string(forKey: "myGhostType") ?? "") ?? .standard
-                let oldRecent = UserDefaults.standard.string(forKey: "myRecentWork") ?? ""
-                let profile = TeamProfile(
-                    id: oldTeamCode,
-                    teamName: "チーム",
-                    displayName: oldName,
-                    role: oldRole,
-                    team: oldTeam,
-                    ghostType: oldGhost,
-                    recentWork: oldRecent,
-                    tags: [],
-                    disclosureLevel: .all
-                )
-                self.joinedTeams = [profile]
-                saveJoinedTeams()
-            }
+            saveJoinedTeams()  // Keychain に移行して保存
+            UserDefaults.standard.removeObject(forKey: joinedTeamsKey)  // UserDefaults から削除
+            return
+        }
+
+        // 旧バージョンからの移行: teamCode が残っている場合
+        let oldTeamCode = UserDefaults.standard.string(forKey: "teamCode") ?? ""
+        if !oldTeamCode.isEmpty {
+            let oldName = UserDefaults.standard.string(forKey: "myName") ?? "GUEST"
+            let oldRole = UserDefaults.standard.string(forKey: "myRole") ?? ""
+            let oldTeam = UserDefaults.standard.string(forKey: "myTeam") ?? ""
+            let oldGhost = GhostType(rawValue: UserDefaults.standard.string(forKey: "myGhostType") ?? "") ?? .standard
+            let oldRecent = UserDefaults.standard.string(forKey: "myRecentWork") ?? ""
+            let profile = TeamProfile(
+                id: oldTeamCode,
+                teamName: "チーム",
+                displayName: oldName,
+                role: oldRole,
+                team: oldTeam,
+                ghostType: oldGhost,
+                recentWork: oldRecent,
+                tags: [],
+                disclosureLevel: .all
+            )
+            self.joinedTeams = [profile]
+            saveJoinedTeams()  // Keychain に保存
         }
     }
 

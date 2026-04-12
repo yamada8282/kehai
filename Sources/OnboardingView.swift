@@ -2,6 +2,9 @@ import SwiftUI
 
 struct OnboardingView: View {
     @EnvironmentObject var store: AppStore
+    @Environment(\.dismiss) private var dismiss
+    
+    var isTutorialOnly: Bool = false
     
     @State private var name: String = ""
     @State private var role: String = ""
@@ -56,23 +59,29 @@ struct OnboardingView: View {
                         tutorialMenuBarStep
                     } else if step == 4 {
                         tutorialGhostStep
-                    } else {
+                    } else if step == 5 {
                         tutorialReactionStep
+                    } else {
+                        accessibilityStep
                     }
                     
                     HStack(spacing: 15) {
-                        if step > 0 {
+                        if step > (isTutorialOnly ? 3 : 0) {
                             Button("戻る") {
                                 withAnimation(.spring()) { step -= 1 }
                             }
                             .buttonStyle(SecondaryButtonStyle())
                         }
                         
-                        Button(step < 5 ? (step == 2 ? "次へ（操作解説）" : "次へ") : "はじめる！") {
-                            if step < 5 {
+                        Button(step < 6 ? (step == 2 ? "次へ（操作解説）" : "次へ") : (isTutorialOnly ? "閉じる" : "はじめる！")) {
+                            if step < 6 {
                                 withAnimation(.spring()) { step += 1 }
                             } else {
-                                handleJoin()
+                                if isTutorialOnly {
+                                    dismiss()
+                                } else {
+                                    handleJoin()
+                                }
                             }
                         }
                         .disabled(isNextDisabled)
@@ -89,6 +98,9 @@ struct OnboardingView: View {
         .frame(minWidth: 720, minHeight: 500)
         .preferredColorScheme(.dark)
         .onAppear {
+            if isTutorialOnly {
+                step = 3
+            }
             startTutorialTimers()
         }
         .onDisappear {
@@ -233,15 +245,97 @@ struct OnboardingView: View {
             }
             
             VStack(alignment: .leading, spacing: 6) {
-                Text("チームコード")
-                    .font(.system(size: 12, weight: .medium))
+                HStack {
+                    Text("チームコード")
+                        .font(.system(size: 12, weight: .medium))
+                    Spacer()
+                    // ランダム生成ボタン
+                    Button {
+                        teamCode = generateTeamCode()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "dice")
+                            Text("ランダム生成")
+                        }
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundColor(.purple)
+                        .padding(.horizontal, 8).padding(.vertical, 3)
+                        .background(Color.purple.opacity(0.12))
+                        .cornerRadius(5)
+                    }
+                    .buttonStyle(.plain)
+                }
                 TextField("例: team-alpha-2024", text: $teamCode)
                     .textFieldStyle(CustomTextFieldStyle())
+                Text("友達と同じコードを入力してね。新チームなら「ランダム生成」で安全なコードを作れます。")
+                    .font(.system(size: 10))
+                    .foregroundColor(.white.opacity(0.4))
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.top, 5)
         }
     }
-    
+
+    /// セキュアなチームコードを生成（UUID ベースで短め）
+    private func generateTeamCode() -> String {
+        let raw = UUID().uuidString.lowercased().prefix(8)
+        return "kehai-\(raw)"
+    }
+
+    /// アクセシビリティ権限の説明ステップ
+    private var accessibilityStep: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "keyboard.badge.eye")
+                .font(.system(size: 40))
+                .foregroundColor(.orange)
+
+            VStack(spacing: 6) {
+                Text("プライバシーについて")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(.white)
+                Text("Kehai がお願いする権限について説明します")
+                    .font(.system(size: 12))
+                    .foregroundColor(.white.opacity(0.6))
+            }
+
+            VStack(alignment: .leading, spacing: 10) {
+                permissionRow(
+                    icon: "keyboard",
+                    color: .orange,
+                    title: "アクセシビリティ権限",
+                    desc: "キーボード・マウスの操作量を計測して「稼働率」を算出します。\n入力内容（文字・クリック先）は一切記録しません。"
+                )
+                permissionRow(
+                    icon: "desktopcomputer",
+                    color: .blue,
+                    title: "現在のアプリ名",
+                    desc: "前面に表示しているアプリ名（例: Figma）をチームに共有します。\n設定でカテゴリのみ表示・非表示にもできます。"
+                )
+            }
+            .padding(14)
+            .background(Color.white.opacity(0.05))
+            .cornerRadius(10)
+        }
+    }
+
+    private func permissionRow(icon: String, color: Color, title: String, desc: String) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 16))
+                .foregroundColor(color)
+                .frame(width: 24)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.white)
+                Text(desc)
+                    .font(.system(size: 10))
+                    .foregroundColor(.white.opacity(0.5))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
     private var tutorialMenuBarStep: some View {
         VStack(spacing: 20) {
             VStack(spacing: 8) {
