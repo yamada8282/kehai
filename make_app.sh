@@ -64,7 +64,7 @@ cat > "$APP_BUNDLE/Contents/Info.plist" <<EOF
     <key>SUFeedURL</key>
     <string>https://raw.githubusercontent.com/$GH_USER/kehai/main/appcast.xml</string>
     <key>SUPublicEDKey</key>
-    <string>QWR9HAVKDnn6unzowcLDGVuFNr+sjNuKv3hXKF6DFBk=</string>
+    <string>8ksnHLy48Ik8z3vZoflvhZw+ebsxk3cRZat9zst29fY=</string>
 </dict>
 </plist>
 EOF
