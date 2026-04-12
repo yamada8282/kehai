@@ -50,7 +50,7 @@ fi
 
 # 秘密鍵の入力（保存していない場合）
 if [ -z "$PRIVATE_KEY" ]; then
-    read -sp "EdDSA秘密鍵を入力してください（以前保存したもの）: " PRIVATE_KEY
+    read -sp "EdDSA秘密鍵を入力してください（以前保存したもの）: " PRIVATE_KEY < /dev/tty
     echo ""
 fi
 
